@@ -7,12 +7,12 @@ ahmad.tabbakha@toyotaconnected.com
 
 * What is a module
 
+Preliminary support
+
 A collection of related go packages that are versioned together.
 Modules record precise dependency requirements and create reproducible builds.
 
-
 Most of the time you will create one module in the root of the repo.
-
 
 Relationship between modules, repos, and packages
 - A repo contains one or more Go Modules.
@@ -70,3 +70,36 @@ exclude github.com/SermoDigital/jose v0.9.1
 replace github.com/google/uuid v1.1.0 => git.coolaj86.com/coolaj86/uuid.go v1.1.1
 
 the exclude directive here says to not use that version of jose. Since there are no other valid versions it will pull the latest from master. the replace directive lets you change the referenced code to a fork of the code.
+
+* Version Selection
+
+adding new imports in your code that isn't in your go.mod file is now automatically downloaded if you run commands like 'go build', 'go test'. The highest version of the new dependency is automatically added to your go.mod with the appropriate require directive.
+
+minimal version selection is used to select the versions of all modules used in a build. For each module in a build, the version selected by minimal version selection is always the semantically highest of the versions explicitly listed by a require directive in the main module or one of its dependencies.
+
+example
+
+Module A requires Module D v1.0.0
+Module A requires Module B which requires Module D v1.1.1
+
+then v1.1.1 is chosen.
+
+* Quick Demo Time
+
+We need go 1.11 to use modules.
+There is a new environment variable to take a look at GO111MODULE.
+It's normally set to auto which means modules are active outside of the gopath.
+You can turn modules on inside the GOPATH by setting it to on.
+
+let's move a simple project from dep to go.
+
+
+* Further Reading
+
+There is quite a bit of information on modules that I probably did not get to cover here in detail.
+Almost everything you would want to know about modules is in the wiki page below. I highly recommend reading https://github.com/golang/go/wiki/Modules
+
+There is a large FAQ which can answer most of your questions.
+
+Another thing modules are capable of consuming packages that have not yet opted into modules.
+I would make sure your text editor supports modules so that your auto complete doesn't break.
