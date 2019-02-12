@@ -5,23 +5,64 @@ Ahmad Tabbakha
 Associate Software Developer, Toyota Connected
 ahmad.tabbakha@toyotaconnected.com
 
-* What is a module
+* Existing dependency managers
+- goven, godeps, dep, govendor,glide, and many more
 
-Preliminary support
+Go Modules know how to migrate from some of these which makes our life easy.
+
+Files That can be converted to go.mod
+GLOCKFILE
+Godeps/Godeps.json
+Gopkg.lock
+dependencies.tsv
+glide.lock
+vendor.conf
+vendor.yml
+vendor/manifest
+vendor/vendor.json
+
+* Go 1.11
+
+-This version of go introduces go modules
+
+`go help modules`
+
+* Principles of versioning in Go
+
+- Compatibility
+
+Import compatibility rule - If and old package and new package have the same import path the new package must be backwards compatible.
+
+- Repeatability
+
+The result of a build of a given version of a package should not change over time.
+
+- Cooperation
+
+We must all work together to maintain the Go package ecosystem. Tools cannot work around a lack of cooperation.
+
+all credit goes to Russ Cox
+
+* Semantic versioning
+
+Modules use semantiv versioning according to https://semver.org/
+This is the format `v(major).(minor).(patch)`
+Examples v0.1.0, v1.5.99, v1.2.3
+
+Increment major version for api breaking changes.
+Increment minor when adding new features.
+Increment patch for bug fixes
+
+* What is a module
 
 A collection of related go packages that are versioned together.
 Modules record precise dependency requirements and create reproducible builds.
-
-Most of the time you will create one module in the root of the repo.
 
 Relationship between modules, repos, and packages
 - A repo contains one or more Go Modules.
 - Each module contains one or more Go packages.
 - Each package consists of one or more Go source files in one directory.
 
-One last thing about modules is that they are semantically versioned according to https://semver.org/.
-This is the format `v(major).(minor).(patch)`
-Examples v0.1.0, v1.5.99, v1.2.3
 
 * go.mod
 
@@ -71,6 +112,25 @@ replace github.com/google/uuid v1.1.0 => git.coolaj86.com/coolaj86/uuid.go v1.1.
 
 the exclude directive here says to not use that version of jose. Since there are no other valid versions it will pull the latest from master. the replace directive lets you change the referenced code to a fork of the code.
 
+* Create a module
+
+➜  mkdir /tmp/mod
+➜  cd /tmp/mod
+➜  go mod init github.com/whatsadebugger/hello
+go: creating new go.mod: module github.com/whatsadebugger/hello
+➜  cat go.mod
+module github.com/whatsadebugger/hello
+
+package main <- create this file hello.go
+import(
+  "fmt"
+  "rsc.io/quote"
+)
+
+func main() {
+  fmt.Println(quote.Hello())
+}
+
 * Version Selection
 
 adding new imports in your code that isn't in your go.mod file is now automatically downloaded if you run commands like 'go build', 'go test'. The highest version of the new dependency is automatically added to your go.mod with the appropriate require directive.
@@ -84,11 +144,9 @@ Module A requires Module B which requires Module D v1.1.1
 
 then v1.1.1 is chosen.
 
-* Quick Demo Time
+* Convert a project from dep
 
-We need go 1.11 to use modules.
-There is a new environment variable to take a look at GO111MODULE.
-It's normally set to auto which means modules are active outside of the gopath.
+Simplest way to use modules is to work outside the GOPATH.
 You can turn modules on inside the GOPATH by setting it to on.
 
 let's move a simple project from dep to go.
@@ -99,7 +157,13 @@ let's move a simple project from dep to go.
 There is quite a bit of information on modules that I probably did not get to cover here in detail.
 Almost everything you would want to know about modules is in the wiki page below. I highly recommend reading https://github.com/golang/go/wiki/Modules
 
-There is a large FAQ which can answer most of your questions.
+More topics to learn about and many more
+- Publish modules
+- Module consumption
+- Custom import paths
+
+There is a large FAQ which can answer most of your questions in the wiki linked above.
+
 
 Another thing modules are capable of consuming packages that have not yet opted into modules.
 I would make sure your text editor supports modules so that your auto complete doesn't break.
