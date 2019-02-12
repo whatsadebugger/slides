@@ -131,6 +131,60 @@ func main() {
   fmt.Println(quote.Hello())
 }
 
+* Upgrade a module
+
+➜  go list -m -u all # show possible upgrades for our dependencies
+go: finding golang.org/x/text v0.3.0
+go: finding rsc.io/sampler v1.99.99
+github.com/whatsadebugger/hello
+golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c [v0.3.0]
+rsc.io/quote v1.5.2
+rsc.io/sampler v1.3.0 [v1.99.99]
+
+➜  go get -u golang.org/x/text
+go: downloading golang.org/x/text v0.3.0
+➜  cat go.mod
+module github.com/whatsadebugger/hello
+
+require (
+	golang.org/x/text v0.3.0 // indirect
+	rsc.io/quote v1.5.2
+)
+
+* Downgrade a module
+
+➜  cat go.mod
+module github.com/whatsadebugger/hello
+
+require (
+	golang.org/x/text v0.3.0 // indirect
+	rsc.io/quote v1.5.2
+	rsc.io/sampler v1.99.99 // indirect
+)
+➜  go get rsc.io/sampler@v1.3.1
+➜  cat go.mod
+module github.com/whatsadebugger/hello
+
+require (
+	golang.org/x/text v0.3.0 // indirect
+	rsc.io/quote v1.5.2
+	rsc.io/sampler v1.3.1 // indirect
+)
+
+* Go list
+
+List versions that are going to appear in the final build
+go list -m all
+
+➜ go list -m -versions rsc.io/quote
+rsc.io/quote v1.0.0 v1.1.0 v1.2.0 v1.2.1 v1.3.0 v1.4.0 v1.5.0 v1.5.1 v1.5.2 v1.5.3-pre1
+
+➜ go list -m -versions all
+github.com/whatsadebugger/hello
+golang.org/x/text v0.1.0 v0.2.0 v0.3.0
+rsc.io/quote v1.0.0 v1.1.0 v1.2.0 v1.2.1 v1.3.0 v1.4.0 v1.5.0 v1.5.1 v1.5.2 v1.5.3-pre1
+rsc.io/sampler v1.0.0 v1.2.0 v1.2.1 v1.3.0 v1.3.1 v1.99.99
+
 * Version Selection
 
 adding new imports in your code that isn't in your go.mod file is now automatically downloaded if you run commands like 'go build', 'go test'. The highest version of the new dependency is automatically added to your go.mod with the appropriate require directive.
