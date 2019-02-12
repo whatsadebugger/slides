@@ -5,5 +5,68 @@ Ahmad Tabbakha
 Associate Software Developer, Toyota Connected
 ahmad.tabbakha@toyotaconnected.com
 
-* Basics
+* What is a module
 
+A collection of related go packages that are versioned together.
+Modules record precise dependency requirements and create reproducible builds.
+
+
+Most of the time you will create one module in the root of the repo.
+
+
+Relationship between modules, repos, and packages
+- A repo contains one or more Go Modules.
+- Each module contains one or more Go packages.
+- Each package consists of one or more Go source files in one directory.
+
+One last thing about modules is that they are semantically versioned according to https://semver.org/.
+This is the format `v(major).(minor).(patch)`
+Examples v0.1.0, v1.5.99, v1.2.3
+
+* go.mod
+
+Module source code can be located outside of the GOPATH.
+Also most often you usually will end up witha single go.mod file in the root of your repo.
+
+example file
+
+module github.com/my/thing
+
+require (
+    github.com/some/dependency v1.2.3
+    github.com/another/dependency/v4 v4.0.0
+)
+
+* go.mod directives
+
+There are four directives that can be used inside of go.mod. module, require, replace, exclude.
+
+module is used to declare the identity of the module which is now your module path. All packages in the module share the module import path located in the go.mod file. The sub packages in the repo will share the module path as their prefix.
+
+Let's assume the go module directive is github.com/my/repo. In the below example we have two packages and their import paths
+github.com/my/repo/bar and github.com/my/repo/foo
+
+repo/
+├── go.mod
+├── bar
+│   └── bar.go
+└── foo
+│   └── foo.go
+
+* directives continued
+
+Replace lets you change the import path of a specific dependency. Exclude will exlcude a specific version of a dependency. 
+A good example I found on stackoverflow.
+
+module github.com/example/project
+
+require (
+    github.com/SermoDigital/jose v0.0.0-20180104203859-803625baeddc
+    github.com/google/uuid v1.1.0
+)
+
+exclude github.com/SermoDigital/jose v0.9.1
+
+replace github.com/google/uuid v1.1.0 => git.coolaj86.com/coolaj86/uuid.go v1.1.1
+
+the exclude directive here says to not use that version of jose. Since there are no other valid versions it will pull the latest from master. the replace directive lets you change the referenced code to a fork of the code.
