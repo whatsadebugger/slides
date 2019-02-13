@@ -45,7 +45,7 @@ all credit goes to Russ Cox
 
 * Semantic versioning
 
-Modules use semantiv versioning according to https://semver.org/
+Modules use semantic versioning according to https://semver.org/
 This is the format `v(major).(minor).(patch)`
 Examples v0.1.0, v1.5.99, v1.2.3
 
